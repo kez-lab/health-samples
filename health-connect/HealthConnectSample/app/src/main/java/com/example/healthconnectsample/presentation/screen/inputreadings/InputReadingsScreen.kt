@@ -41,7 +41,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,11 +74,6 @@ fun InputReadingsScreen(
     weeklyAvg: Mass?,
     onPermissionsLaunch: (Set<String>) -> Unit = {}
 ) {
-
-    // Remember the last error ID, such that it is possible to avoid re-launching the error
-    // notification for the same error when the screen is recomposed, or configuration changes etc.
-    val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
-
     LaunchedEffect(uiState) {
         // If the initial data load has not taken place, attempt to load the data.
         if (uiState is InputReadingsViewModel.UiState.Uninitialized) {
@@ -90,9 +84,8 @@ fun InputReadingsScreen(
         // was a success or resulted in an error. Where an error occurred, for example in reading
         // and writing to Health Connect, the user is notified, and where the error is one that can
         // be recovered from, an attempt to do so is made.
-        if (uiState is InputReadingsViewModel.UiState.Error && errorId.value != uiState.uuid) {
+        if (uiState is InputReadingsViewModel.UiState.Error) {
             onError(uiState.exception)
-            errorId.value = uiState.uuid
         }
     }
 
@@ -243,7 +236,7 @@ fun InputReadingsScreenPreview() {
                     sourceAppInfo = appInfo
                 )
             ),
-            uiState = InputReadingsViewModel.UiState.Done
+            uiState = InputReadingsViewModel.UiState.Done,
         )
 
     }

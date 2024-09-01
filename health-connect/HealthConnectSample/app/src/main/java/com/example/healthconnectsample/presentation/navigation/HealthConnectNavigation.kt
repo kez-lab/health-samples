@@ -41,10 +41,10 @@ import com.example.healthconnectsample.presentation.screen.inputreadings.InputRe
 import com.example.healthconnectsample.presentation.screen.inputreadings.InputReadingsViewModel
 import com.example.healthconnectsample.presentation.screen.inputreadings.InputReadingsViewModelFactory
 import com.example.healthconnectsample.presentation.screen.privacypolicy.PrivacyPolicyScreen
-import com.example.healthconnectsample.presentation.screen.recordlist.RecordType
 import com.example.healthconnectsample.presentation.screen.recordlist.RecordListScreen
 import com.example.healthconnectsample.presentation.screen.recordlist.RecordListScreenViewModel
 import com.example.healthconnectsample.presentation.screen.recordlist.RecordListViewModelFactory
+import com.example.healthconnectsample.presentation.screen.recordlist.RecordType
 import com.example.healthconnectsample.presentation.screen.recordlist.SeriesRecordsType
 import com.example.healthconnectsample.presentation.screen.sleepsession.SleepSessionScreen
 import com.example.healthconnectsample.presentation.screen.sleepsession.SleepSessionViewModel
@@ -82,7 +82,7 @@ fun HealthConnectNavigation(
         ) {
             PrivacyPolicyScreen()
         }
-        composable(Screen.SettingsScreen.route){
+        composable(Screen.SettingsScreen.route) {
             SettingsScreen { scope.launch { healthConnectManager.revokeAllPermissions() } }
         }
         composable(Screen.ExerciseSessions.route) {
@@ -94,10 +94,11 @@ fun HealthConnectNavigation(
             val permissionsGranted by viewModel.permissionsGranted
             val sessionsList by viewModel.sessionsList
             val permissions = viewModel.permissions
-            val onPermissionsResult = {viewModel.initialLoad()}
+            val onPermissionsResult = { viewModel.initialLoad() }
             val permissionsLauncher =
                 rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-                onPermissionsResult()}
+                    onPermissionsResult()
+                }
             ExerciseSessionScreen(
                 permissionsGranted = permissionsGranted,
                 permissions = permissions,
@@ -119,7 +120,8 @@ fun HealthConnectNavigation(
                     viewModel.initialLoad()
                 },
                 onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)}
+                    permissionsLauncher.launch(values)
+                }
             )
         }
         composable(Screen.ExerciseSessionDetail.route + "/{$UID_NAV_ARGUMENT}") {
@@ -133,10 +135,11 @@ fun HealthConnectNavigation(
             val permissionsGranted by viewModel.permissionsGranted
             val sessionMetrics by viewModel.sessionMetrics
             val permissions = viewModel.permissions
-            val onPermissionsResult = {viewModel.initialLoad()}
+            val onPermissionsResult = { viewModel.initialLoad() }
             val permissionsLauncher =
                 rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-                onPermissionsResult()}
+                    onPermissionsResult()
+                }
             ExerciseSessionDetailScreen(
                 permissions = permissions,
                 permissionsGranted = permissionsGranted,
@@ -170,10 +173,11 @@ fun HealthConnectNavigation(
             val permissionsGranted by viewModel.permissionsGranted
             val recordList = viewModel.recordList
             val permissions = viewModel.permissions
-            val onPermissionsResult = {viewModel.initialLoad()}
+            val onPermissionsResult = { viewModel.initialLoad() }
             val permissionsLauncher =
                 rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-                    onPermissionsResult()}
+                    onPermissionsResult()
+                }
             RecordListScreen(
                 uid = uid,
                 permissions = permissions,
@@ -186,7 +190,8 @@ fun HealthConnectNavigation(
                     viewModel.initialLoad()
                 },
                 onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)}
+                    permissionsLauncher.launch(values)
+                }
             )
         }
         composable(Screen.SleepSessions.route) {
@@ -230,10 +235,11 @@ fun HealthConnectNavigation(
             val readingsList by viewModel.readingsList
             val permissions = viewModel.permissions
             val weeklyAvg by viewModel.weeklyAvg
-            val onPermissionsResult = {viewModel.initialLoad()}
+            val onPermissionsResult = { viewModel.initialLoad() }
             val permissionsLauncher =
                 rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-                onPermissionsResult()}
+                    onPermissionsResult()
+                }
             InputReadingsScreen(
                 permissionsGranted = permissionsGranted,
                 permissions = permissions,
@@ -254,7 +260,8 @@ fun HealthConnectNavigation(
                     viewModel.initialLoad()
                 },
                 onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)}
+                    permissionsLauncher.launch(values)
+                }
             )
         }
         composable(Screen.DifferentialChanges.route) {
@@ -266,10 +273,11 @@ fun HealthConnectNavigation(
             val changesToken by viewModel.changesToken
             val permissionsGranted by viewModel.permissionsGranted
             val permissions = viewModel.permissions
-            val onPermissionsResult = {viewModel.initialLoad()}
+            val onPermissionsResult = { viewModel.initialLoad() }
             val permissionsLauncher =
                 rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-                onPermissionsResult()}
+                    onPermissionsResult()
+                }
             DifferentialChangesScreen(
                 permissionsGranted = permissionsGranted,
                 permissions = permissions,

@@ -40,6 +40,8 @@ class InputReadingsViewModel(private val healthConnectManager: HealthConnectMana
     ViewModel() {
     private val healthConnectCompatibleApps = healthConnectManager.healthConnectCompatibleApps
 
+    private var errorId: UUID = UUID.randomUUID()
+
     val permissions = setOf(
         HealthPermission.getReadPermission(WeightRecord::class),
         HealthPermission.getWritePermission(WeightRecord::class),
@@ -93,7 +95,7 @@ class InputReadingsViewModel(private val healthConnectManager: HealthConnectMana
     private suspend fun readWeightInputs() {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        val endOfWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         readingsList.value = healthConnectManager
             .readWeightInputs(startOfDay.toInstant(), now)
             .map { record ->
@@ -106,7 +108,7 @@ class InputReadingsViewModel(private val healthConnectManager: HealthConnectMana
                 )
             }
         weeklyAvg.value =
-            healthConnectManager.computeWeeklyAverage(startOfDay.toInstant(), endofWeek)
+            healthConnectManager.computeWeeklyAverage(startOfDay.toInstant(), endOfWeek)
     }
 
     /**
@@ -127,19 +129,29 @@ class InputReadingsViewModel(private val healthConnectManager: HealthConnectMana
             }
             UiState.Done
         } catch (remoteException: RemoteException) {
-            UiState.Error(remoteException)
+            generateErrorState(remoteException)
         } catch (securityException: SecurityException) {
-            UiState.Error(securityException)
+            generateErrorState(securityException)
         } catch (ioException: IOException) {
-            UiState.Error(ioException)
+            generateErrorState(ioException)
         } catch (illegalStateException: IllegalStateException) {
-            UiState.Error(illegalStateException)
+            generateErrorState(illegalStateException)
+        }
+    }
+
+    private fun generateErrorState(exception: Throwable): UiState {
+        val newError = UiState.Error(exception)
+        return if (newError.uuid != errorId) {
+            errorId = newError.uuid
+            newError
+        } else {
+            uiState
         }
     }
 
     sealed class UiState {
-        object Uninitialized : UiState()
-        object Done : UiState()
+        data object Uninitialized : UiState()
+        data object Done : UiState()
 
         // A random UUID is used in each Error object to allow errors to be uniquely identified,
         // and recomposition won't result in multiple snackbars.
